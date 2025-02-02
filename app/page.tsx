@@ -20,6 +20,9 @@ export default function Home() {
             </code>
             .
           </li>
+          <li className='list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]'>
+            Hello vercel!!!
+          </li>
           <li>Save and see your changes instantly.</li>
         </ol>
 
