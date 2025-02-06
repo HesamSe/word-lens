@@ -11,17 +11,23 @@ export const config = {
     },
 };
 
+interface NextApiRequestWithFile extends NextApiRequest {
+    file?: Express.Multer.File;
+}
+
 // Middleware handler to process the file
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequestWithFile, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
         const fileBuffer: Buffer = await new Promise((resolve, reject) => {
-            upload.single('file')(req as any, {} as any, (err: any) => {
+            // @ts-expect-error todo
+            upload.single('file')(req as Record<string, unknown>, {}, (err: Error) => {
                 if (err) reject(err);
-                else resolve((req as any).file.buffer);
+                else if(req.file) resolve(req.file.buffer);
+                else reject();
             });
         });
 

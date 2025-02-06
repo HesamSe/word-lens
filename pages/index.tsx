@@ -29,7 +29,7 @@ export default function Home() {
             } else {
                 setError(data.error || 'Upload failed');
             }
-        } catch (err) {
+        } catch {
             setError('Error uploading file');
         }
     };
