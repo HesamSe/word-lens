@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
+import pdfParse from "pdf-parse";
 
 // Configure multer for file handling
 const upload = multer({ storage: multer.memoryStorage() });
@@ -30,10 +31,8 @@ export default async function handler(req: NextApiRequestWithFile, res: NextApiR
                 else reject();
             });
         });
-
-        // Convert the file buffer to a string and count characters
-        const fileContent = fileBuffer.toString('utf-8');
-        const charCount = fileContent.length;
+        const data = await pdfParse(fileBuffer);
+        const charCount = data.text.split(' ').length;
 
         res.status(200).json({ charCount });
     } catch (error) {

@@ -8,8 +8,8 @@ export default function Home() {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        if (file.type !== 'text/plain') {
-            setError('Only .txt files are allowed');
+        if (file.type !== 'application/pdf') {
+            setError('Only .pdf files are allowed');
             return;
         }
 
@@ -41,7 +41,7 @@ export default function Home() {
 
                 <input
                     type="file"
-                    accept=".txt"
+                    accept=".pdf"
                     onChange={handleUpload}
                     className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
                 />
