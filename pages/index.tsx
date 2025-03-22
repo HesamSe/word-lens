@@ -1,7 +1,11 @@
 import { useState } from 'react';
+type WordCount = {
+    word: string;
+    count: number;
+};
 
 export default function Home() {
-    const [charCount, setCharCount] = useState<number | null>(null);
+    const [words, setWords] = useState<WordCount[]>();
     const [error, setError] = useState<string | null>(null);
 
     const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +28,7 @@ export default function Home() {
 
             const data = await response.json();
             if (response.ok) {
-                setCharCount(data.charCount);
+                setWords(data.words);
                 setError(null);
             } else {
                 setError(data.error || 'Upload failed');
@@ -46,8 +50,37 @@ export default function Home() {
                     className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
                 />
 
-                {charCount !== null && (
-                    <p className="mt-4 text-lg font-medium text-green-600">Character Count: {charCount}</p>
+                {words !== null && (
+                    <div className="mt-4">
+                        <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
+                            <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+                                <tr>
+                                    <th scope="col" className="px-6 py-3">
+                                        Word
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Count
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {words?.map(wc => (
+                                <tr
+                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                                    key={wc.word}
+                                >
+                                    <th scope="row"
+                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {wc.word}
+                                    </th>
+                                    <td className="px-6 py-4">
+                                        {wc.count}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
                 {error && <p className="mt-4 text-red-500">{error}</p>}

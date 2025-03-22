@@ -32,9 +32,18 @@ export default async function handler(req: NextApiRequestWithFile, res: NextApiR
             });
         });
         const data = await pdfParse(fileBuffer);
-        const charCount = data.text.split(' ').length;
+        const words = data.text.split(' ');
+        const wordCount = new Map<string, number>();
 
-        res.status(200).json({ charCount });
+        // Count occurrences
+        for (const word of words) {
+            wordCount.set(word, (wordCount.get(word) || 0) + 1);
+        }
+
+        res.status(200).json({ words: Array.from(wordCount.entries()).map(wc => ({
+                word: wc[0],
+                count: wc[1]
+            })).sort((a, b) => b.count - a.count) });
     } catch (error) {
         console.error('File processing error:', error);
         res.status(500).json({ error: 'Failed to process file' });
