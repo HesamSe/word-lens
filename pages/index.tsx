@@ -47,7 +47,7 @@ export default function Home() {
 
     return (
         <div className="flex flex-col gap-2 items-center h-screen w-screen bg-white dark:bg-gray-900 p-4">
-            <div className="flex-none flex flex-col items-center justify-center max-w-md min-h-36 min-w-96 text-center block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white">
+            <div className="flex-none flex flex-col items-center justify-center max-w-md min-h-36 min-w-96 text-center p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white">
                 <h1 className="text-xl font-semibold mb-4">
                     Upload a PDF File
                 </h1>

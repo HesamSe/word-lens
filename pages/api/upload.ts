@@ -32,7 +32,9 @@ export default async function handler(req: NextApiRequestWithFile, res: NextApiR
             });
         });
         const data = await pdfParse(fileBuffer);
-        const words = data.text.split(' ');
+        const words = data.text.split(/\s+/)
+            .map(word => word.replace(/[.,]/g, "").toLowerCase())
+            .filter(word => word.length > 0);
         const wordCount = new Map<string, number>();
 
         // Count occurrences
