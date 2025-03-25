@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import {useState, useRef} from 'react';
+import { useVirtualizer } from "@tanstack/react-virtual";
 import '../app/globals.css'
 import Loading from "@/components/loading";
 
@@ -7,10 +8,18 @@ type WordCount = {
     count: number;
 };
 
+
 export default function Home() {
     const [words, setWords] = useState<WordCount[]>();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const parentRef = useRef<HTMLDivElement>(null);
+    const rowVirtualizer = useVirtualizer({
+        count: words?.length || 0,
+        getScrollElement: () => parentRef.current,
+        estimateSize: () => 48, // Approximate row height
+        overscan: 5, // Render extra rows above/below
+    });
 
     const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -63,8 +72,8 @@ export default function Home() {
                 </div>
             </div>
             {!!words && (
-                <div className='flex-1 overflow-auto w-full'>
-                    <table className=' w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
+                <div ref={parentRef} className='flex-1 overflow-auto w-full'>
+                    <table className=' w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed'>
                         <thead
                             className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                         <tr>
@@ -76,23 +85,37 @@ export default function Home() {
                             </th>
                         </tr>
                         </thead>
-                        <tbody>
-                        {words?.map(wc => (
-                            <tr
-                                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 max-w-full overflow-hidden"
-                                key={wc.word}
-                            >
-                                <th scope="row"
-                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <div className='max-w-72 truncate'>
-                                        {wc.word}
-                                    </div>
-                                </th>
-                                <td className="px-6 py-4">
-                                    {wc.count}
-                                </td>
-                            </tr>
-                        ))}
+                        <tbody
+                            style={{
+                                height: `${rowVirtualizer.getTotalSize()}px`,
+                                position: "relative",
+                            }}
+                        >
+                        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                            const wc = words[virtualRow.index];
+
+                            return (
+                                <tr
+                                    key={wc.word}
+                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 w-full flex flex-row max-w-full overflow-hidden"
+                                    style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        height: `${virtualRow.size}px`,
+                                        transform: `translateY(${virtualRow.start}px)`,
+                                    }}
+                                >
+                                    <th
+                                        scope="row"
+                                        className="px-6 w-1/2 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                    >
+                                        <div className="max-w-72 truncate">{wc.word}</div>
+                                    </th>
+                                    <td className="px-6 py-4 w-1/2">{wc.count}</td>
+                                </tr>
+                            );
+                        })}
                         </tbody>
                     </table>
                 </div>
