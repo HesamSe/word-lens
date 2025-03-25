@@ -32,14 +32,14 @@ export default async function handler(req: NextApiRequestWithFile, res: NextApiR
             });
         });
         const data = await pdfParse(fileBuffer);
-        const words = data.text.split(/\s+/)
-            .map(word => word.replace(/[.,]/g, "").toLowerCase())
-            .filter(word => word.length > 0);
+        const words = data.text.split(/\s+/);
         const wordCount = new Map<string, number>();
 
         // Count occurrences
         for (const word of words) {
-            wordCount.set(word, (wordCount.get(word) || 0) + 1);
+            const w = word.replace(/[.,]/g, "").toLowerCase();
+            if(w.length > 0)
+                wordCount.set(word, (wordCount.get(word) || 0) + 1);
         }
 
         res.status(200).json({ words: Array.from(wordCount.entries()).map(wc => ({
