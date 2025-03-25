@@ -37,9 +37,9 @@ export default async function handler(req: NextApiRequestWithFile, res: NextApiR
 
         // Count occurrences
         for (const word of words) {
-            const w = word.replace(/[.,]/g, "").toLowerCase();
+            const w = word.replace(/[^a-zA-Z]/g, "").toLowerCase();
             if(w.length > 0)
-                wordCount.set(word, (wordCount.get(word) || 0) + 1);
+                wordCount.set(w, (wordCount.get(w) || 0) + 1);
         }
 
         res.status(200).json({ words: Array.from(wordCount.entries()).map(wc => ({
