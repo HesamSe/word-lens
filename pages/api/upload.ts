@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
 import pdfParse from "pdf-parse";
-
+import {words} from "@/utils/simple-words";
+const simpleWords = new Set(words);
 // Configure multer for file handling
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -38,7 +39,7 @@ export default async function handler(req: NextApiRequestWithFile, res: NextApiR
         // Count occurrences
         for (const word of words) {
             const w = word.replace(/[^a-zA-Z]/g, "");
-            if(w.charAt(0) && w.charAt(0) === w.charAt(0).toLowerCase())
+            if(w.charAt(0) && w.charAt(0) === w.charAt(0).toLowerCase() && !simpleWords.has(w))
                 wordCount.set(w, (wordCount.get(w) || 0) + 1);
         }
 
